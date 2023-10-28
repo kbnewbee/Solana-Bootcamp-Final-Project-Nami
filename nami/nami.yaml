@@ -1,0 +1,139 @@
+cidl: "0.8"
+info:
+  name: ticket
+  title: Ticket NFT
+  version: 0.0.1
+  license:
+    name: Unlicense
+    identifier: Unlicense
+types:
+  TicketMetadata:
+    solana:
+      seeds:
+        - name: "ticket"
+        - name: mintTicket
+          type: sol:pubkey
+    fields:
+      - name: name
+        type: string
+        solana:
+          attributes: [ cap:255 ]
+      - name: game
+        type: string
+        solana:
+          attributes: [ cap:255 ]
+      - name: location
+        type: string
+        solana:
+          attributes: [ cap:255 ]
+      - name: seat
+        type: string
+        solana: 
+          attributes: [ cap:20 ]
+      - name: date
+        type: string
+        solana:
+          attributes: [ cap:20 ]
+      - name: price
+        type: f32
+      - name: class
+        type: string
+        solana:
+          attributes: [cap:20]
+      - name: available
+        type: u32
+      - name: isOwned
+        type: bool
+      - name: isGift
+        type: bool
+      - name: isUsed
+        type: bool
+      - name: mintTicket
+        type: sol:pubkey
+      - name: assoc_account
+        type: rs:option<sol:pubkey>
+
+methods:
+  - name: mintTicket
+    uses:
+      - csl_spl_token.initialize_mint2
+      - csl_spl_assoc_token.create
+      - csl_spl_token.mint_to
+      - csl_spl_token.set_authority
+    inputs:
+      - name: mintTicket
+        type: csl_spl_token.Mint
+        solana:
+          attributes: [ init ]
+      - name: ticket
+        type: TicketMetadata
+        solana:
+          attributes: [ init ]
+          seeds:
+            mintTicket: mintTicket
+      - name: name
+        type: string
+      - name: game
+        type: string
+      - name: location
+        type: string
+      - name: seat
+        type: string
+      - name: price
+        type: f32
+      - name: date
+        type: string
+      - name: class
+        type: string
+      - name: available
+        type: u32
+      - name: isOwned
+        type: bool
+      - name: isGift
+        type: bool
+      - name: isUsed
+        type: bool
+
+  - name: gift    
+    uses:
+      - csl_spl_assoc_token.create
+      - csl_spl_token.transfer_checked
+    inputs:
+      - name: mintTicket
+        type: csl_spl_token.Mint
+      - name: ticket
+        type: TicketMetadata
+        solana:
+          attributes: [ mut ]
+          seeds:
+            mintTicket: mintTicket
+
+  - name: transfer
+    uses:
+      - csl_spl_assoc_token.create
+      - csl_spl_token.transfer_checked
+    inputs:
+      - name: mintTicket
+        type: csl_spl_token.Mint
+      - name: ticket
+        type: TicketMetadata
+        solana:
+          attributes: [ mut ]
+          seeds:
+            mintTicket: mintTicket
+  
+  - name: burn
+    uses:
+      - csl_spl_token.burn
+    inputs:
+      - name: mintTicket
+        type: csl_spl_token.Mint
+      - name: ticket
+        type: TicketMetadata
+        solana:
+          attributes: [ mut ]
+          seeds:
+            mintTicket: mintTicket
+  
+
+  
